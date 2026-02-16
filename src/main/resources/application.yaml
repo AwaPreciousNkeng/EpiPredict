@@ -13,9 +13,18 @@ spring:
       hibernate:
         format_sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+  servlet:
+    multipart:
+      max-file-size: 50MB
+springdoc:
+  default-produces-media-type: application/json
+
   application:
     name: EpiPredict
 application:
+  file:
+    uploads:
+      media-output-path: ./uplaods
   security:
     jwt:
       secret: "Va6Hik/rv8jzFbjE4VTYNZ4hbUVwGCBBGXkAduI9Plo="
