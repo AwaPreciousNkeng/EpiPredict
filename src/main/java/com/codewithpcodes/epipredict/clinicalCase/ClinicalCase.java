@@ -18,12 +18,23 @@ public class ClinicalCase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Enumerated(EnumType.STRING)
     private DiseaseType diseaseType;
+
+    @Enumerated(EnumType.STRING)
     private Severity severity;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User healthPersonnel;
+
+    private Integer patientAge;
+
+    @Enumerated(EnumType.STRING)
+    private Gender patientGender;
+    private String description;
+    private String hospital;
 
     @ManyToOne
     @JoinColumn(name = "district_id")
