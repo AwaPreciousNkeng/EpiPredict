@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,15 +20,15 @@ public class EnvReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private HazardType hazardType;
-    private double latitude;
-    private double longitude;
+    private List<HazardType> hazardTypes;
+    private Double latitude;
+    private Double longitude;
     private String description;
     private Status status;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User reporter;
 
     @ManyToOne
     @JoinColumn(name = "district_id")
