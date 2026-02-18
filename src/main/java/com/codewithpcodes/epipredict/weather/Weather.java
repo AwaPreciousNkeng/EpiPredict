@@ -1,4 +1,4 @@
-package com.codewithpcodes.epipredict.weatherLog;
+package com.codewithpcodes.epipredict.weather;
 
 import com.codewithpcodes.epipredict.district.District;
 import jakarta.persistence.*;
@@ -12,14 +12,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Entity
-public class WeatherLog {
+public class Weather {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private double temperatureCelsius;
-    private double humidityPercent;
-    private double rainfallMm;
+    private Double tempCelsius;
+    private Double humidityPercent;
+    private Double rainfallMm;
 
     @ManyToOne
     @JoinColumn(name = "district_id")

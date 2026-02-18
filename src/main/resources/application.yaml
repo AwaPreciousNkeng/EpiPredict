@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: EpiPredict
   datasource:
     url: jdbc:postgresql://localhost:5432/epipredict_db
     username: pcodes
@@ -18,10 +20,11 @@ spring:
       max-file-size: 50MB
 springdoc:
   default-produces-media-type: application/json
-
-  application:
-    name: EpiPredict
 application:
+  weather:
+    api:
+      key: b3817fd2143405d963039a0b49ad6db6
+      url: https://api.openweathermap.org/data/2.5/weather
   file:
     uploads:
       media-output-path: ./uplaods

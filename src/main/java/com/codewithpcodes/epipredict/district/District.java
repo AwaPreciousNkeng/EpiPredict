@@ -5,7 +5,7 @@ import com.codewithpcodes.epipredict.clinicalCase.ClinicalCase;
 import com.codewithpcodes.epipredict.envReport.EnvReport;
 import com.codewithpcodes.epipredict.risk.RiskSnapshot;
 import com.codewithpcodes.epipredict.user.User;
-import com.codewithpcodes.epipredict.weatherLog.WeatherLog;
+import com.codewithpcodes.epipredict.weather.Weather;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -40,7 +40,7 @@ public class District {
     private List<ClinicalCase> clinicalCases;
 
     @OneToMany(mappedBy = "district")
-    private List<WeatherLog> weatherLogs;
+    private List<Weather> weathers;
 
     @OneToMany(mappedBy = "district")
     private List<RiskSnapshot> riskSnapshots;
