@@ -14,13 +14,4 @@ AND e.status = :status
 """)
     Long countByDistrictIdAndStatus(Long districtId, Status status);
 
-    @Query("""
-SELECT COUNT(e)
-FROM EnvReport e
-WHERE e.district.id = :districtId
-AND e.status = 'OPEN'
-AND e.reportTime >= :since
-""")
-    Long countRecentOpenReports(Long districtId, LocalDateTime since);
-
 }

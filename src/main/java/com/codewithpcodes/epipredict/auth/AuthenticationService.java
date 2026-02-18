@@ -23,6 +23,7 @@ import tools.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -59,6 +60,7 @@ public class AuthenticationService {
                         ? request.profilePicture()
                         : defaultProfilePicture
                 )
+                .createdDate(LocalDateTime.now())
                 .build();
         var savedUser = repository.save(user);
 

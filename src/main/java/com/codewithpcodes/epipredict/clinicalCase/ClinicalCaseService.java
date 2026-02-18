@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -36,6 +37,7 @@ public class ClinicalCaseService {
                 .description(request.description())
                 .hospital(request.hospital())
                 .district(district)
+                .admissionTime(LocalDateTime.now())
                 .build();
         repository.save(clinicalCase);
         return mapper.toClinicalCaseResponse(clinicalCase);

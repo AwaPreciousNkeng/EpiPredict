@@ -24,5 +24,7 @@ public class Weather {
     @ManyToOne
     @JoinColumn(name = "district_id")
     private District district;
-    private LocalDateTime logTime = LocalDateTime.now();
+
+    @Column(name = "log_time", nullable = false, updatable = false)
+    private LocalDateTime logTime;
 }

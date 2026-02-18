@@ -39,5 +39,7 @@ public class ClinicalCase {
     @ManyToOne
     @JoinColumn(name = "district_id")
     private District district;
-    private LocalDateTime admissionTime = LocalDateTime.now();
+
+    @Column(name = "admission_time", nullable = false, updatable = false)
+    private LocalDateTime admissionTime;
 }

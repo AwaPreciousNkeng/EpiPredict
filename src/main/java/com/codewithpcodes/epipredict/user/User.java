@@ -46,13 +46,13 @@ public class User implements UserDetails {
     @JoinColumn(name = "district_id")
     private District district;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "reporter")
     private List<EnvReport> envReports;
 
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "healthPersonnel")
     private List<ClinicalCase> clinicalCases;
     @CreatedDate
     @Column(name = "created_date", updatable = false, nullable = false)

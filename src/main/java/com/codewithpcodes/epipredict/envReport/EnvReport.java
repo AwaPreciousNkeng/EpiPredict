@@ -33,5 +33,7 @@ public class EnvReport {
     @ManyToOne
     @JoinColumn(name = "district_id")
     private District district;
-    private LocalDateTime reportTime = LocalDateTime.now();
+
+    @Column(name = "report_time", nullable = false, updatable = false)
+    private LocalDateTime reportTime;
 }

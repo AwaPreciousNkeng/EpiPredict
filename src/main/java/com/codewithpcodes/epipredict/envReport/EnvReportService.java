@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -34,6 +35,7 @@ public class EnvReportService {
                 .longitude(request.longitude())
                 .latitude(request.latitude())
                 .status(Status.OPEN)
+                .reportTime(LocalDateTime.now())
                 .build();
         repository.save(report);
         return mapper.toEnvReportResponse(report);
