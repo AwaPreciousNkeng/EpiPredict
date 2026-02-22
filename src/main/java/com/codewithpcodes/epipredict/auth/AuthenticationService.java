@@ -61,6 +61,8 @@ public class AuthenticationService {
                         : defaultProfilePicture
                 )
                 .createdDate(LocalDateTime.now())
+                .lastModifiedDate(LocalDateTime.now())
+                .isEnabled(true)
                 .build();
         var savedUser = repository.save(user);
 
@@ -85,13 +87,17 @@ public class AuthenticationService {
             AuthenticationRequest request
     ) {
         // 1. Authenticate credentials (throws AuthenticationException on failure)
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.email(),
-                        request.password()
-                )
-        );
-
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.email(),
+                            request.password()
+                    )
+            );
+        } catch (Exception e) {
+            log.error("AUTH FAILED: {}", e.getMessage());
+            throw e;
+        }
         // 2. Retrieve user
         var user = repository.findByEmail(request.email())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found after successful authentication."));
@@ -103,6 +109,7 @@ public class AuthenticationService {
         // 4. Revoke old and save new token
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
+
 
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
