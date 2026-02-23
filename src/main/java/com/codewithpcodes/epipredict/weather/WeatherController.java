@@ -1,6 +1,7 @@
 package com.codewithpcodes.epipredict.weather;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,11 +15,15 @@ public class WeatherController {
 
     @PostMapping("/fetch/{district-id}")
     public ResponseEntity<WeatherResponse> fetchWeather(@PathVariable("district-id") Long districtId) {
-        return ResponseEntity.ok(service.fetchAndSaveWeather(districtId));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.fetchAndSaveWeather(districtId));
     }
 
     @GetMapping("/history/{district-id}")
     public ResponseEntity<List<WeatherResponse>> getWeatherHistory(@PathVariable("district-id") Long districtId) {
-        return ResponseEntity.ok(service.getWeatherHistory(districtId));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(service.getWeatherHistory(districtId));
     }
 }
