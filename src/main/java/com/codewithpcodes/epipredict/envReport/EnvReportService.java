@@ -21,8 +21,15 @@ public class EnvReportService {
     private final DistrictRepository districtRepository;
 
     public EnvReportResponse createReport(EnvReportRequest request, Authentication currentUser) {
-        User reporter = userRepository.findById(Long.parseLong(currentUser.getName()))
-                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+        User reporter = (User) currentUser.getPrincipal();
+
+        //A CHW can only report cases in their district
+        if (reporter == null) {
+            throw new ResourceNotFoundException("User not found.");
+        }
+        if (!reporter.getDistrict().getId().equals(request.districtId())) {
+            throw new RuntimeException("You cannot report cases outside your assigned district.");
+        }
 
         District district = districtRepository.findById(request.districtId())
                 .orElseThrow(() -> new ResourceNotFoundException("District not found."));

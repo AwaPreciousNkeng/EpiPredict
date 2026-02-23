@@ -1,5 +1,6 @@
 package com.codewithpcodes.epipredict.config;
 
+import com.codewithpcodes.epipredict.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -77,6 +78,12 @@ public class JwtService {
             Map<String, Object> extraClaims,
             UserDetails userDetails
     ) {
+        User user = (User) userDetails;
+        extraClaims.put("userId", user.getId());
+        extraClaims.put("role", user.getRole().name());
+        if (user.getDistrict() != null) {
+            extraClaims.put("districtId", user.getDistrict().getId());
+        }
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
 
