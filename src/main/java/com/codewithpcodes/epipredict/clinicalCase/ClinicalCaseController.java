@@ -1,5 +1,6 @@
 package com.codewithpcodes.epipredict.clinicalCase;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/clinical-cases")
 @RequiredArgsConstructor
+@Tag(name = "Clinical Case")
 public class ClinicalCaseController {
     private final ClinicalCaseService service;
 

@@ -38,7 +38,7 @@ public class EpiPredictApplication {
                         "password",
                         ""
                 );
-                System.out.println("Admin token: " + service.register(admin).getAccessToken());
+                System.out.println("Admin token: " + service.createAdmin(admin).getAccessToken());
             } else {
                 System.out.println("Default ADMIN exists already, skipping creation.");
             }
