@@ -6,6 +6,7 @@ import com.codewithpcodes.epipredict.exceptions.ResourceNotFoundException;
 import com.codewithpcodes.epipredict.user.User;
 import com.codewithpcodes.epipredict.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +28,9 @@ public class EnvReportService {
         if (reporter == null) {
             throw new ResourceNotFoundException("User not found.");
         }
-        if (!reporter.getDistrict().getId().equals(request.districtId())) {
-            throw new RuntimeException("You cannot report cases outside your assigned district.");
+        if (reporter.getDistrict() == null ||
+                !reporter.getDistrict().getId().equals(request.districtId())) {
+            throw new AccessDeniedException("You cannot report cases outside your assigned district.");
         }
 
         District district = districtRepository.findById(request.districtId())
