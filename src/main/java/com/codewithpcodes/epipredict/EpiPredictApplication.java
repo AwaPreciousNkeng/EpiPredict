@@ -1,6 +1,7 @@
 package com.codewithpcodes.epipredict;
 
 import com.codewithpcodes.epipredict.auth.AuthenticationService;
+import com.codewithpcodes.epipredict.auth.CreateAdminRequest;
 import com.codewithpcodes.epipredict.auth.RegisterRequest;
 import com.codewithpcodes.epipredict.user.Role;
 import com.codewithpcodes.epipredict.user.UserRepository;
@@ -23,21 +24,19 @@ public class EpiPredictApplication {
     }
 
     @Bean
-    public CommandLineRunner commandLineRunner(
+    CommandLineRunner initAdmin(
             AuthenticationService service,
-            UserRepository repository,
             UserRepository userRepository) {
         return args -> {
             String defaultEmail = "admin@gmail.com";
 
             if (!userRepository.existsByEmail(defaultEmail)) {
-                var admin = new RegisterRequest(
+                var admin = new CreateAdminRequest(
                         "EpiPredict",
                         "Admin",
                         "admin@gmail.com",
                         "password",
-                        "",
-                        Role.ADMIN
+                        ""
                 );
                 System.out.println("Admin token: " + service.register(admin).getAccessToken());
             } else {

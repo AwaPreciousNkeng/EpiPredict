@@ -13,10 +13,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/clinical-cases")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('CLINICIAN')")
 public class ClinicalCaseController {
     private final ClinicalCaseService service;
 
+    @PreAuthorize("hasRole('CLINICIAN')")
     @PostMapping
     public ResponseEntity<ClinicalCaseResponse> logCase(
             @Valid @RequestBody ClinicalCaseRequest request,
@@ -27,6 +27,7 @@ public class ClinicalCaseController {
                 .body(service.logCase(request, currentUser));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<ClinicalCaseResponse>> getAllCases() {
         return ResponseEntity

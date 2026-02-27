@@ -1,8 +1,13 @@
 package com.codewithpcodes.epipredict.handler;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 public record ErrorResponse(
-        Map<String, String> errors
+        int status,
+        String error,
+        String message,
+        Map<String, String> validationErrors,
+        LocalDateTime timestamp
 ) {
 }

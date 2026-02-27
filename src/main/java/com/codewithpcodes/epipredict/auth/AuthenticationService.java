@@ -6,6 +6,7 @@ import com.codewithpcodes.epipredict.exceptions.ResourceNotFoundException;
 import com.codewithpcodes.epipredict.token.Token;
 import com.codewithpcodes.epipredict.token.TokenRepository;
 import com.codewithpcodes.epipredict.token.TokenType;
+import com.codewithpcodes.epipredict.user.Role;
 import com.codewithpcodes.epipredict.user.User;
 import com.codewithpcodes.epipredict.user.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +26,9 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.EnumSet;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +39,8 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+
+    public static final Set<Role> PUBLIC_REGISTRATION_ROLES = EnumSet.of(Role.CLINICIAN, Role.CHW);
 
     @Transactional
     public AuthenticationResponse register(RegisterRequest request) {
@@ -49,13 +56,19 @@ public class AuthenticationService {
         }
 
         // 2. Build and save a user
-        // TODO: FIX this problem user shouldn't be able to just become an admin without proper check
+        Role requestedRole = Optional.ofNullable(request.role())
+                .orElse(Role.CHW);
+
+        if (!PUBLIC_REGISTRATION_ROLES.contains(requestedRole)) {
+            throw new AccessDeniedException("User role is not allowed to register.");
+        }
+
         var user = User.builder()
                 .firstName(request.firstName())
                 .lastName(request.lastName())
                 .email(request.email())
                 .password(passwordEncoder.encode(request.password()))
-                .role(request.role())
+                .role(requestedRole)
                 .profilePicture(request.profilePicture() != null
                         ? request.profilePicture()
                         : defaultProfilePicture
@@ -69,11 +82,6 @@ public class AuthenticationService {
         // 3. Generate tokens
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
-
-        // 4. Revoke previous and save new
-        // Note: Revoking all tokens here is redundant for a new user,
-        // but kept for safety/consistency if the registration flow changes.
-        revokeAllUserTokens(savedUser);
         saveUserToken(savedUser, jwtToken);
 
         return AuthenticationResponse.builder()
@@ -81,6 +89,42 @@ public class AuthenticationService {
                 .refreshToken(refreshToken)
                 .build();
     }
+
+    @Transactional
+    public AuthenticationResponse createAdmin(CreateAdminRequest request) {
+        String defaultProfilePicture = "https://ui-avatars.com/api/?name=" +
+                URLEncoder.encode(request.firstName() + " " + request.lastName(), StandardCharsets.UTF_8) +
+                "&background=random&color=fff&size=256";
+
+        if (repository.existsByEmail(request.email())) {
+            throw new DuplicateResourceException("User already exists with email: " + request.email());
+        }
+
+        User admin = User.builder()
+                .firstName(request.firstName())
+                .lastName(request.lastName())
+                .email(request.email())
+                .password(passwordEncoder.encode(request.password()))
+                .profilePicture(request.profilePicture() != null
+                        ? request.profilePicture()
+                        : defaultProfilePicture
+                )
+                .role(Role.ADMIN)
+                .isEnabled(true)
+                .createdDate(LocalDateTime.now())
+                .lastModifiedDate(LocalDateTime.now())
+                .build();
+        var savedAdmin = repository.save(admin);
+
+        var jwtToken = jwtService.generateToken(admin);
+        var refreshToken = jwtService.generateRefreshToken(admin);
+        saveUserToken(savedAdmin, jwtToken);
+        return AuthenticationResponse.builder()
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
 
     @Transactional
     public AuthenticationResponse authenticate(

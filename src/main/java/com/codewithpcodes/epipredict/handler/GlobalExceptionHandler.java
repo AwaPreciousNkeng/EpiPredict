@@ -2,30 +2,34 @@ package com.codewithpcodes.epipredict.handler;
 
 import com.codewithpcodes.epipredict.exceptions.DuplicateResourceException;
 import com.codewithpcodes.epipredict.exceptions.ResourceNotFoundException;
+import jakarta.persistence.Access;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(DuplicateResourceException.class)
-    public ResponseEntity<String> handle(DuplicateResourceException exp) {
-        return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(exp.getMessage());
+    public ResponseEntity<ErrorResponse> handle(DuplicateResourceException exp) {
+        return buildResponse(HttpStatus.CONFLICT, exp.getMessage(), null);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<String> handle(ResourceNotFoundException exp) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(exp.getMessage());
+    public ResponseEntity<ErrorResponse> handle(ResourceNotFoundException exp) {
+        return buildResponse(HttpStatus.NOT_FOUND, exp.getMessage(), null);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handle(AccessDeniedException exp) {
+        return buildResponse(HttpStatus.FORBIDDEN, exp.getMessage(), null);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -36,8 +40,25 @@ public class GlobalExceptionHandler {
             var errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse(errors));
+        return buildResponse(
+                HttpStatus.BAD_REQUEST,
+                "Validation failed",
+                errors
+        );
+    }
+
+    private ResponseEntity<ErrorResponse> buildResponse(
+            HttpStatus httpStatus,
+            String message,
+            HashMap<String, String> errors
+    ) {
+        ErrorResponse response = new ErrorResponse(
+                httpStatus.value(),
+                httpStatus.getReasonPhrase(),
+                message,
+                errors,
+                LocalDateTime.now()
+        );
+        return ResponseEntity.status(httpStatus).body(response);
     }
 }

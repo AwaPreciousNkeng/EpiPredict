@@ -14,11 +14,11 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/env-reports")
 @RequiredArgsConstructor
-@PreAuthorize( "hasRole('CHW')")
 public class EnvReportController {
 
     private final EnvReportService service;
 
+    @PreAuthorize("hasRole('CHW')")
     @PostMapping
     public ResponseEntity<EnvReportResponse> createReport(
             @Valid @RequestBody EnvReportRequest request,
@@ -29,6 +29,7 @@ public class EnvReportController {
                 .body(service.createReport(request, currentUser));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<EnvReportResponse>> getAllReports() {
         return ResponseEntity
