@@ -1,0 +1,5 @@
+/home/pcodes/Desktop/springboot/EpiPredict/Backend/src/test/java/com/codewithpcodes/epipredict/EpiPredictApplicationTests.java
+/home/pcodes/Desktop/springboot/EpiPredict/Backend/src/test/java/com/codewithpcodes/epipredict/clinicalCase/ClinicalCaseControllerTest.java
+/home/pcodes/Desktop/springboot/EpiPredict/Backend/src/test/java/com/codewithpcodes/epipredict/envReport/EnvReportControllerTest.java
+/home/pcodes/Desktop/springboot/EpiPredict/Backend/src/test/java/com/codewithpcodes/epipredict/envReport/EnvReportSecurityTest.java
+/home/pcodes/Desktop/springboot/EpiPredict/Backend/src/test/java/com/codewithpcodes/epipredict/weather/WeatherControllerTest.java
